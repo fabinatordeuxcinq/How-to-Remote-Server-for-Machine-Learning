@@ -71,8 +71,8 @@ To do so, there is this extensions :
 ![image](https://user-images.githubusercontent.com/90333559/235730760-e2bdfe51-aafd-4a39-aead-0948077952a5.png)
 
 Then, hit __ctrl + Maj + p__ and select __Remote-SSH : Connect Current Window to Host__
+![image](https://user-images.githubusercontent.com/90333559/235734416-a6aa8771-f7ee-4442-96ec-cf0e2fecafed.png)
 
-![image](https://user-images.githubusercontent.com/90333559/235731162-ba567084-2b30-4336-9c54-82639cf7a4df.png)
 
 
 Then it will let you select the remote sever you define in your config file. 
@@ -81,6 +81,78 @@ Then it will let you select the remote sever you define in your config file.
 
 Nautilus, which is the name of the default file browser in Ubunutu, let you easily connect to distant server through ssh.
 
-![image](https://user-images.githubusercontent.com/90333559/235732156-5fce2d94-723b-4e4b-a201-8964eac41d5a.png)
+![image](https://user-images.githubusercontent.com/90333559/235733988-ef1de286-1705-4fa1-b67f-c8ccaa7e3c6d.png)
 
+
+## TensorBoard
+
+If you are using TensorBoard to track the training of your model, to be able to vizualize it in real time, you need to do :
+
+1) One remote Server (named remote_name in your config file) : 
+
+```
+python3 -m tensorboard.main --logdir path/to/logs
+```
+It will open your the tensorboard on a port (here let's say 6006)
+
+Then on your local machine : 
+
+```
+command = "ssh -N -f -L localhost:16006:localhost:6006 remote_name"
+```
+Then you will be able to visualize your tensorboard on : __http://localhost:16006/__
+
+## Screen command 
+
+If you running commands on the distant server and then close your terminal, it will stop the execution of your program. 
+
+We obiously don't want to wait until our training is done to shut down our local computer, this is where the __screen__ command takes place. 
+
+Let's say you want to lauch your trainining script. 
+
+First, you will need to create a screen session : 
+
+```
+screen -S Training
+```
+
+Then you be automaticly inside this session. You can run your script : 
+
+```
+python3 training_script.py 
+```
+
+And now hit __ctrl + a__ then __ctrl + d__ to quit the session. 
+
+You will come back to your terminal in the state it was before you calling screen, and you can close it. 
+
+```
+[detached from XXXXXX.Training]
+```
+
+To see your opened session : 
+
+```
+screen -list 
+```
+```
+There is a screen on:
+	XXXXXX.Training	(00/00/0000 00:00:00)	(Detached)
+1 Socket in /run/screen/S-username.
+```
+
+To retach to your session when it's detached: 
+```
+screen -r Training 
+```
+Sometime, if you close your terminal to early, (before hitting __ctrl + a__ __ctrl + d__), your session can stay attached, and then
+__screen -r__ will not work. 
+
+You will need to do :
+
+```
+screen -x Training
+```
+
+One you are done with your training, simply type __exit__ to close the session. 
 
