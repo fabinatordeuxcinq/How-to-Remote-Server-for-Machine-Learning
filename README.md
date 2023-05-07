@@ -156,3 +156,32 @@ screen -x Training
 
 One you are done with your training, simply type __exit__ to close the session. 
 
+## Check GPU availability 
+
+If There are multiple GPUs on the remote server, you may want to be sure to select one 
+that are not used by an other person. Ideally, your program will take as argument the device id (which can be "cpu" or 0,1,2 ...), 
+but you still need to check manually which GPU is available before running your script. 
+It will happen that your forget causing in the best case, the well known CUDA OUT OF MEMORY, and in the worse
+your program will execut on the same GPU, which is slow. 
+
+What i use is this simple gpu_utils file : 
+
+```python
+from pynvml.smi import nvidia_smi
+
+class AlreadyInUseGPUError(Exception) :
+    def __init__(self, device) -> None:
+        message = f"Already in use GPU : {device}. Please use other GPU."
+        super().__init__(message)
+
+def is_device_in_use(device) :
+    if device == "cpu" :
+        return False
+    return nvidia_smi.getInstance().DeviceQuery()["gpu"][device]["processes"] is not None
+
+def list_not_in_use_gpu() :
+    nv = nvidia_smi.getInstance().DeviceQuery()["gpu"]
+    total = len(nv)
+    l = [idx for idx in range(total) if nv[idx]['processes'] is None]
+    return l
+```
