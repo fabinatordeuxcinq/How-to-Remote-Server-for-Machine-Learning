@@ -7,12 +7,11 @@ Let's say you just arrived in a compagny, they gave you your username and passwo
 you can connect through ssh : 
 
 ```console
-personal_computer~: ssh username@ssh.compagny.com
+~: ssh username@ssh.compagny.com
 ```
 
-It will ask you for your password every time you will connect. 
 
-To avoid this, we can create a config file name «config» in the __.shh__ directory.
+To avoid tapping username@ssh.compagny.com every time you will connect, we can create a config file name «config» in the __.shh__ directory.
 
 config : 
 ```
@@ -45,6 +44,19 @@ Now you can juste do :
 ```
 ssh remote_name
 ```
+## Password 
+
+Entering your password evrytime you want to connect is annoying, this can be by : 
+
+Creating private/public key : 
+```console
+ssh-keygen -t rsa
+```
+Now you can do : 
+```console
+ssh-copy-id username@ssh.compagny.com
+```
+It will ask for your password one last time. 
 
 ## Transfer file 
 
